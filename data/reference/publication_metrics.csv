@@ -1,0 +1,14 @@
+method,dataset,evaluation_rows,artifact_exact,artifact_jaccard,paper_exact,paper_jaccard,verification,notes
+viterbi,synthetic,100000,0.80296,0.8805921926406927,0.803,0.881,frozen_predictions,
+viterbi,human,2000,0.531,0.6718365620490621,0.531,0.672,frozen_predictions,
+viterbi_fallback,synthetic,100000,0.8469,0.9062766608946609,0.846,0.906,frozen_predictions,The manuscript EM cell is inconsistent with conventional rounding of the final tuned rerun (0.847); see docs/reproducibility_notes.md.
+viterbi_fallback,human,2000,0.5955,0.7172431096681097,0.596,0.717,frozen_predictions,
+entropy_vbe,synthetic,100000,0.38943,0.5493383857531358,0.389,0.549,frozen_predictions,
+entropy_vbe,human,2000,0.4455,0.5972854728604728,0.445,0.597,frozen_predictions,
+pos,synthetic,100000,0.0,0.11357777092352093,0.000,0.114,frozen_predictions,
+pos,human,2000,0.0,0.07695459956709956,0.000,0.077,frozen_predictions,
+gpt_5_mini,synthetic,10000,0.8649,0.9106337734487735,0.865,0.911,frozen_predictions,The LLM was evaluated on the first 10000 synthetic rows.
+gpt_5_mini,human,2000,0.7625,0.8380029761904761,0.763,0.838,frozen_predictions,
+hybrid,synthetic,10000,0.884,0.926,0.884,0.926,aggregate_only,The exact per-row live-API snapshot was not retained in the research repository.
+hybrid,human,2000,0.655,0.7601924603174604,0.655,0.760,aggregate_only,The exact aggregate is retained in the original benchmark CSV; per-row live-API output was not retained.
+

@@ -1,0 +1,8 @@
+method,domains_per_second,margin,source
+viterbi,5612,539,manuscript_table
+viterbi_fallback,258.16,5.77,manuscript_table
+entropy_vbe,12500,1990,manuscript_table
+pos,6.27,0.50,manuscript_table
+gpt_5_mini,7.95,,manuscript_table
+hybrid,42.76,,manuscript_table
+

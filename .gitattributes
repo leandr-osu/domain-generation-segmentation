@@ -1,0 +1,13 @@
+# Canonical data checksums must survive checkout on every platform.
+*.csv -text -diff
+*.gz binary
+*.txt -text
+checksums.sha256 -text
+
+*.cff text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.R text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf

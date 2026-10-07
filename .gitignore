@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+outputs/
+.DS_Store
+
+# Locally acquired upstream datasets and model checkpoints are intentionally
+# not redistributed. See data/resources/README.md and artifacts/README.md.
+data/resources/generator/
+artifacts/pos_generation_model/
+artifacts/pos_segmentation_model/
+data/resources/vbe_ngrams/

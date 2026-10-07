@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "domain-generation-segmentation"
+version = "1.0.0"
+description = "Publication artifact for synthetic domain generation and domain-name segmentation."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy==1.26.4",
+  "pandas==2.2.3",
+]
+
+[project.optional-dependencies]
+models = [
+  "torch==2.6.0",
+  "transformers==4.55.2",
+  "accelerate==1.10.0",
+  "nltk==3.9.1",
+  "conllu==6.0.0",
+  "scikit-learn==1.6.1",
+]
+llm = ["openai==1.107.3"]
+generation = [
+  "datasets==4.4.2",
+  "publicsuffix2==2.20191221",
+  "requests>=2.31,<3",
+]
+dev = ["pytest>=8,<9"]
+all = [
+  "torch==2.6.0",
+  "transformers==4.55.2",
+  "accelerate==1.10.0",
+  "nltk==3.9.1",
+  "conllu==6.0.0",
+  "scikit-learn==1.6.1",
+  "openai==1.107.3",
+  "datasets==4.4.2",
+  "publicsuffix2==2.20191221",
+  "requests>=2.31,<3",
+]
+
+[project.scripts]
+domain-generate = "domain_generation_segmentation.generation:main"
+domain-segment = "domain_generation_segmentation.runner:main"
+domain-reproduce = "domain_generation_segmentation.reproduce:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
