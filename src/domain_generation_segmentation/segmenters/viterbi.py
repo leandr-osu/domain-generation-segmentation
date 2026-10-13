@@ -1,12 +1,8 @@
-"""Publication Viterbi segmenters.
+"""Viterbi-based domain segmenters.
 
-This module contains both the baseline Viterbi implementation and the tuned
-abbreviation/fuzzy fallback variant.  It only needs the WordSegment-style
-``unigrams.txt`` and ``bigrams.txt`` count files distributed with this artifact.
-
-The implementation originated from the standalone script used for the final
-experiments. Keeping the scoring and tie-breaking code together prevents the
-baseline and fallback paths from silently loading different dictionaries.
+The baseline and the abbreviation/fuzzy version share the same WordSegment
+``unigrams.txt`` and ``bigrams.txt`` files. They live in one module so both
+paths use the same scoring and tie-breaking code.
 """
 
 from __future__ import annotations
@@ -30,7 +26,7 @@ BASE_ABBR_LOG_PRIORS = {
     5: -11.5,
 }
 
-# Best balanced-exact settings from wordsegment_joint_hyperparameter_tuning.csv.
+# Settings selected from wordsegment_joint_hyperparameter_tuning.csv.
 DEFAULT_BOUNDARY_PENALTY = 0.35
 DEFAULT_ABBR_PRIOR_OFFSET = 0.25
 DEFAULT_EDIT_PENALTY = 2.5
@@ -115,8 +111,7 @@ BIGRAM_COUNTS: dict[str, float] = {}
 def load_counts(unigrams_path: Path | None = None, bigrams_path: Path | None = None) -> None:
     """Load unigram and bigram counts.
 
-    Calling this explicitly is optional. The segmenter lazily loads the default
-    files the first time it is used.
+    This call is optional; the defaults are loaded on first use if needed.
     """
     global UNIGRAM_COUNTS, BIGRAM_COUNTS
     UNIGRAM_COUNTS = parse_count_file(resolve_counts_file("unigrams.txt", unigrams_path))
@@ -125,7 +120,7 @@ def load_counts(unigrams_path: Path | None = None, bigrams_path: Path | None = N
 
 
 def clear_counts() -> None:
-    """Release count dictionaries and fuzzy caches between large method runs."""
+    """Clear the word counts and fuzzy-match cache to free memory."""
     global UNIGRAM_COUNTS, BIGRAM_COUNTS
     UNIGRAM_COUNTS = {}
     BIGRAM_COUNTS = {}
@@ -160,7 +155,7 @@ def default_abbr_log_priors(abbr_prior_offset: float = DEFAULT_ABBR_PRIOR_OFFSET
 
 
 def parse_abbr_log_priors(value: str | None) -> dict[int, float] | None:
-    """Parse values like '2:-9.5,3:-10,4:-10.75,5:-11.5'."""
+    """Parse a comma-separated list such as ``2:-9.5,3:-10``."""
     if value is None or value.strip() == "":
         return None
 
@@ -176,7 +171,7 @@ def current_oov_log_score(word: str) -> float:
 
 
 def log10_sum_exp(values: list[float]) -> float:
-    """Return log10(sum(10**value)) without numerical underflow."""
+    """Compute a base-10 log-sum-exp without underflow."""
     maximum = max(values)
     return maximum + log10(sum(10 ** (value - maximum) for value in values))
 
@@ -306,7 +301,7 @@ def segment_viterbi_piece(
     alpha: float = 1.0,
     limit: int = 24,
 ) -> tuple[float | None, list[str]]:
-    """Segment one separator-free string with the publication baseline."""
+    """Run the baseline segmenter on a string with no dots or hyphens."""
     ensure_counts_loaded()
 
     @memoize
@@ -319,7 +314,7 @@ def segment_viterbi_piece(
                 suffix_score, suffix_words = search(suffix, prefix)
                 yield log10(word_score(prefix, prev, alpha=alpha)) + suffix_score, [prefix] + suffix_words
 
-        # Tuple comparison is intentional: it preserves the original tie break.
+        # max() also compares the word lists, matching the old tie-breaking rule.
         return max(candidates())
 
     score, words = search(str(text).lower())
@@ -331,7 +326,7 @@ def segment_viterbi_domain(
     threshold: float = float("-inf"),
     alpha: float = 1.0,
 ) -> tuple[float | None, list[str]]:
-    """Split dots/hyphens first, then apply the baseline to each piece."""
+    """Split on dots and hyphens, then segment each remaining piece."""
     pieces = split_domain_separators(str(domain))
     if not pieces:
         return None, []
@@ -378,7 +373,7 @@ def _transpose_one(token: str) -> set[str]:
 
 @lru_cache(maxsize=100_000)
 def _edit_distance_one_candidates(token: str, max_candidates: int, min_count: int) -> tuple[str, ...]:
-    """Return known words within one Damerau-Levenshtein edit of token."""
+    """Find dictionary words one Damerau-Levenshtein edit from ``token``."""
     if not token.isalpha():
         return ()
 
@@ -512,7 +507,7 @@ def segment_with_metadata(
     compute_confidence: bool = True,
     limit: int = 24,
 ) -> SegmentResult:
-    """Segment with abbreviation-aware exact scoring plus conservative fuzzy fallback."""
+    """Try abbreviation scoring first, with fuzzy matching as a fallback."""
     if alpha <= 0:
         raise ValueError("alpha must be positive.")
     ensure_counts_loaded()

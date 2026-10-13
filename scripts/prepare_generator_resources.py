@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare the externally acquired name/city/brand/flag sampler CSVs."""
+"""Convert downloaded name, city, brand, and flag data to sampler CSVs."""
 
 from __future__ import annotations
 

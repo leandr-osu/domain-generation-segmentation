@@ -1,4 +1,4 @@
-"""Part-of-speech confidence segmenter evaluated in the publication."""
+"""Domain segmentation based on POS tagger confidence."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ SEPARATORS = re.compile(r"[-.]")
 
 
 def generate_candidates(text: str, max_segments: int = 4) -> list[list[str]]:
-    """Enumerate 2--4 segmentations with a maximum segment length of 14."""
+    """List the 2--4 part splits whose parts are no longer than 14 characters."""
     length = len(text)
     stack: list[tuple[int, list[str]]] = [(0, [])]
     candidates: list[list[str]] = []
@@ -30,7 +30,7 @@ def generate_candidates(text: str, max_segments: int = 4) -> list[list[str]]:
 
 @dataclass
 class PosSegmenter:
-    """Choose the candidate with highest mean POS-token confidence."""
+    """Pick the split with the highest average POS-token confidence."""
 
     model_path: str | Path
 
@@ -90,10 +90,9 @@ class PosSegmenter:
             return "", 0.0
         segments: list[str] = []
         confidences: list[float] = []
-        # The publication run scored every separator-delimited piece,
-        # including the eTLD. This explains outputs such as ``co|m`` and is
-        # intentionally preserved even though holding the eTLD intact would
-        # generally be a better production choice.
+        # The experiment sent every piece through the model, including the
+        # eTLD. That can produce odd results such as ``co|m``, but changing it
+        # would change the reported numbers.
         for piece in pieces:
             words, score = self.segment_piece(piece)
             segments.extend(words)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fine-tune the Brown-corpus POS model used by synthetic generation."""
+"""Train the Brown-corpus POS model used during domain generation."""
 
 from __future__ import annotations
 

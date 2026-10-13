@@ -1,4 +1,4 @@
-"""Synthetic domain generation and domain-name segmentation artifact."""
+"""Tools for generating and segmenting synthetic domain names."""
 
 from .evaluation import evaluate_predictions, exact_match, jaccard_similarity
 

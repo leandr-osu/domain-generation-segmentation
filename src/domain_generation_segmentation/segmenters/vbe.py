@@ -1,4 +1,4 @@
-"""Variation-of-branching-entropy (VBE) domain segmenter."""
+"""Domain segmentation using variation of branching entropy (VBE)."""
 
 from __future__ import annotations
 
@@ -29,11 +29,11 @@ def _integer_keys(mapping: dict[str | int, object]) -> dict[int, object]:
 
 
 class VBESegmenter:
-    """Entropy segmenter from Magistry (2012), as evaluated in the paper.
+    """Implementation of the entropy segmenter from Magistry (2012).
 
-    The constructor accepts the complete character n-gram dictionaries. For
-    convenient reproduction, :meth:`from_json_gz` loads a safe, corpus-specific
-    inference state derived from the original 10-million-domain dictionaries.
+    Pass the full character n-gram dictionaries to the constructor. The
+    :meth:`from_json_gz` helper instead loads the smaller saved state built for
+    one evaluation corpus.
     """
 
     def __init__(self, dictionaries: dict[int, dict[str, int]]):
@@ -57,7 +57,7 @@ class VBESegmenter:
                 self.vbe_dicts[mode][length] = self._bulk_vbe(dictionary, mode)
                 values = np.fromiter(dictionary.values(), dtype=np.float64)
                 self.norm_constants[mode][length] = (float(values.mean()), float(values.std()))
-        # The normalized VBE values are now sufficient for inference.
+        # Segmentation only needs the normalized VBE values after this point.
         self.freq_dicts = {}
         self._branching_entropy.cache_clear()
 
@@ -67,7 +67,7 @@ class VBESegmenter:
         path: str | Path,
         dataset_path: str | Path | None = None,
     ) -> "VBESegmenter":
-        """Load the non-executable JSON artifact and optionally verify its CSV."""
+        """Load a saved JSON state and, if given, check its source CSV."""
         source = Path(path)
         with gzip.open(source, "rt", encoding="utf-8") as handle:
             payload = json.load(handle)
@@ -173,7 +173,7 @@ class VBESegmenter:
 
 
 def read_ngram_dictionaries(directory: str | Path, max_n: int = 10) -> dict[int, dict[str, int]]:
-    """Load dictionaries written by ``scripts/build_vbe_dictionaries.py``."""
+    """Read the files produced by ``scripts/build_vbe_dictionaries.py``."""
     base = Path(directory)
     dictionaries: dict[int, dict[str, int]] = {}
     for n in range(1, max_n + 1):

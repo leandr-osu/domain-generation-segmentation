@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build character n-gram dictionaries from one eTLD-stripped domain per line."""
+"""Count character n-grams in a file with one suffix-stripped domain per line."""
 
 from __future__ import annotations
 

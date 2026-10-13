@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch the three Wiktionary categories used for the abbreviation sampler."""
+"""Download the Wiktionary entries used by the abbreviation sampler."""
 
 from __future__ import annotations
 

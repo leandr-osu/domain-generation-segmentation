@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify locally acquired generator files against the publication manifest."""
+"""Check downloaded generator files against the hash manifest."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def main() -> None:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=Path("data/resources/generator_resource_manifest.csv"),
+        default=Path("data/resources/generator_manifest.csv"),
     )
     args = parser.parse_args()
     failures: list[str] = []

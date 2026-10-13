@@ -1,4 +1,4 @@
-"""GPT-5-mini and hybrid segmentation used in the publication."""
+"""GPT-5-mini segmentation and the Viterbi/GPT hybrid."""
 
 from __future__ import annotations
 
@@ -89,7 +89,7 @@ def segment_domains(
     max_workers: int = 5,
     max_retries: int = 3,
 ) -> list[str]:
-    """Call the exact publication prompt, retaining input order."""
+    """Send batches to GPT and return the results in input order."""
     domain_list = [str(domain) for domain in domains]
     batches = [domain_list[start : start + batch_size] for start in range(0, len(domain_list), batch_size)]
     output: list[list[str] | None] = [None] * len(batches)
@@ -113,7 +113,7 @@ def hybrid_segment(
     batch_size: int = 100,
     max_workers: int = 5,
 ) -> tuple[list[str], list[str]]:
-    """Route fallback posterior confidence below ``threshold`` to GPT."""
+    """Use GPT when the fallback segmenter's confidence is below ``threshold``."""
     if not 0.0 <= threshold <= 1.0:
         raise ValueError("threshold must be between 0 and 1")
     if not (len(domains) == len(fallback_outputs) == len(confidence_scores)):

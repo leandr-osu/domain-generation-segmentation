@@ -1,46 +1,32 @@
 {
-  "generation": {
-    "synthpop_seed": 141727361,
-    "sampler_seed": 42,
-    "synthetic_rows": 100000,
-    "max_segments": 6,
-    "synthpop_version": "1.9.2",
-    "r_version": "4.3.3"
+  "output_dir": "outputs",
+  "pos_model": "artifacts/pos_segmentation_model",
+  "llm": {"model": "gpt-5-mini", "batch_size": 100, "workers": 5},
+  "hybrid_threshold": 0.1,
+  "fallback": {
+    "boundary_penalty": 0.35,
+    "abbr_log_priors": {"2": -9.25, "3": -9.75, "4": -10.5, "5": -11.25},
+    "low_vowel_ratio": 0.34,
+    "low_vowel_bonus": 0.35,
+    "no_vowel_bonus": 0.75,
+    "edit_penalty": 2.5,
+    "accept_margin": 1.0,
+    "segment_reduction_margin": 2.0,
+    "min_fuzzy_length": 5,
+    "max_fuzzy_candidates": 12,
+    "min_candidate_count": 10,
+    "max_known_count_for_fuzzy": 250000.0
   },
-  "segmentation": {
-    "viterbi_total_word_count": 1024908267229.0,
-    "fallback": {
-      "boundary_penalty": 0.35,
-      "abbreviation_prior_offset": 0.25,
-      "abbreviation_log_priors": {
-        "2": -9.25,
-        "3": -9.75,
-        "4": -10.5,
-        "5": -11.25
-      },
-      "edit_penalty": 2.5,
-      "accept_margin": 1.0,
-      "segment_reduction_margin": 2.0,
-      "low_vowel_ratio": 0.34,
-      "low_vowel_bonus": 0.35,
-      "no_vowel_bonus": 0.75,
-      "min_fuzzy_length": 5,
-      "max_fuzzy_candidates": 12,
-      "min_candidate_count": 10,
-      "max_known_count_for_fuzzy": 250000.0
+  "datasets": {
+    "synthetic": {
+      "input": "data/synthetic/domains.csv",
+      "llm_cache": "data/reference/synthetic_predictions.csv.gz",
+      "rows": {"viterbi": 100000, "fallback": 100000, "vbe": 100000, "pos": 1000, "gpt": 10000, "hybrid": 10000}
     },
-    "vbe_max_n": 10,
-    "pos_generation_model": "Brown universal-tag checkpoint",
-    "pos_segmentation_model": "Universal Dependencies English EWT checkpoint",
-    "pos_max_segments": 4,
-    "pos_max_segment_length": 14,
-    "llm_model": "gpt-5-mini",
-    "llm_batch_size": 100,
-    "hybrid_threshold": 0.1
-  },
-  "evaluation": {
-    "human_rows": 2000,
-    "synthetic_rows": 100000,
-    "llm_synthetic_rows": 10000
+    "human": {
+      "input": "data/manual/human_domains.csv",
+      "llm_cache": "data/reference/human_predictions.csv.gz",
+      "rows": {"viterbi": 2000, "fallback": 2000, "vbe": 2000, "pos": 2000, "gpt": 2000, "hybrid": 2000}
+    }
   }
 }

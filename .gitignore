@@ -10,9 +10,37 @@ dist/
 outputs/
 .DS_Store
 
-# Locally acquired upstream datasets and model checkpoints are intentionally
-# not redistributed. See data/resources/README.md and artifacts/README.md.
-data/resources/generator/
+# Locally acquired upstream datasets and model checkpoints.
 artifacts/pos_generation_model/
 artifacts/pos_segmentation_model/
 data/resources/vbe_ngrams/
+data/resources/char_counts/
+data/resources/generator/names.csv
+data/resources/generator/cities.csv
+data/resources/generator/compounds.csv
+data/resources/generator/acronyms.csv
+
+# Only files needed to rerun the experiments and replicate their results are
+# published. Integrity manifests, per-directory READMEs, reports, records that
+# no code reads, and analyses produced outside this repository stay local.
+checksums.sha256
+CITATION.cff
+docs/
+*/**/README.md
+configs/*holdout*
+tests/test_generation.py
+
+# Raw annotation sheets and agreement summaries.
+data/manual/annotator_*.csv
+data/reference/annotation_agreement*
+
+# Held-out fidelity analysis (external pipeline).
+data/synthetic/*holdout*
+data/reference/fidelity_*
+
+# Prose reports and unasserted records.
+data/reference/*.md
+data/reference/publication_throughput.csv
+
+# Superseded corpus and its results, kept locally only.
+deprecated/

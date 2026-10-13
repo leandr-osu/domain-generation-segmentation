@@ -1,8 +1,0 @@
-column,n_compared,agreements,disagreements,agreement_rate,agreement_percent,missing_human1,missing_human2,missing_either
-Segmentation,250,196,54,0.784,78.4,0,0,0
-English? (Yes/No),250,212,38,0.848,84.8,0,0,0
-Compound words?,250,237,13,0.948,94.8,0,0,0
-Acronyms/Abbreviations?,250,228,22,0.912,91.2,0,0,0
-Brand names?,250,199,51,0.796,79.6,0,0,0
-Human names?,250,232,18,0.928,92.8,0,0,0
-Misspelling?,250,235,15,0.94,94.0,0,0,0

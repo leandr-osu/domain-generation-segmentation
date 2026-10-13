@@ -1,8 +1,7 @@
-# Canonical data checksums must survive checkout on every platform.
+# Keep data bytes identical on every platform; VBE states check the CSV SHA-256.
 *.csv -text -diff
 *.gz binary
 *.txt -text
-checksums.sha256 -text
 
 *.cff text eol=lf
 *.json text eol=lf

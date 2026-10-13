@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare newly computed segmentations with the frozen row-level outputs."""
+"""Compare a new run with the saved per-domain predictions."""
 
 from __future__ import annotations
 

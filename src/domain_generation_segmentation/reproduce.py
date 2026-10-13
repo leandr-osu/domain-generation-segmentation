@@ -1,4 +1,4 @@
-"""Verify frozen predictions and print the publication segmentation table."""
+"""Check the saved predictions and print the paper's results table."""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ COLUMN_BY_METHOD = {
     "entropy_vbe": "entropy_vbe",
     "pos": "pos",
     "gpt_5_mini": "gpt_5_mini",
+    "hybrid": "hybrid",
 }
 
 
@@ -100,7 +101,9 @@ def main(argv: Iterable[str] | None = None) -> None:
     parser.add_argument("--output", type=Path, help="optional CSV for recomputed metrics")
     args = parser.parse_args(argv)
     base = root()
-    if not args.skip_checksums:
+    if not (base / "checksums.sha256").exists():
+        print("Checksums: skipped (no checksums.sha256)")
+    elif not args.skip_checksums:
         failures = verify_checksums(base)
         if failures:
             raise SystemExit("Checksum verification failed:\n" + "\n".join(failures))
@@ -118,7 +121,7 @@ def main(argv: Iterable[str] | None = None) -> None:
 
     print("\nPublication table (recorded display precision)")
     print(publication_table(expected).to_string(index=False))
-    print("\nHybrid rows are aggregate-only; see docs/reproducibility_notes.md.")
+    print("\nThe human hybrid row is aggregate-only; see the Hybrid section of README.md.")
 
 
 if __name__ == "__main__":

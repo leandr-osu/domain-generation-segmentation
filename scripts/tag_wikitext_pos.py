@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tag the WikiText frequency table into weighted POS sampler files."""
+"""Turn the WikiText word counts into weighted files grouped by POS tag."""
 
 from __future__ import annotations
 
@@ -35,9 +35,8 @@ def main() -> None:
         rows = list(csv.reader(handle))
 
     by_tag: dict[str, list[tuple[str, str]]] = {tag: [] for tag in TAGS}
-    # The exploratory script passed its CSV header through the model too. It did
-    # not land in the retained POS files, but preserving the call order keeps
-    # this cleaned implementation faithful to the publication pipeline.
+    # The first version also passed the CSV header to the tagger. It was not
+    # written to any POS file, but we keep the same call order for reproducibility.
     for row in rows:
         if len(row) < 2:
             continue
@@ -50,8 +49,9 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for tag, values in by_tag.items():
         with (args.output_dir / f"{tag}.csv").open("w", newline="", encoding="utf-8") as handle:
-            # No header: this is the exact format consumed in the publication.
-            csv.writer(handle).writerows(values)
+            writer = csv.writer(handle)
+            writer.writerow(["word", "weight"])
+            writer.writerows(values)
     print(args.output_dir)
 
 

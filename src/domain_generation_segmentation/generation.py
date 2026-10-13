@@ -1,4 +1,4 @@
-"""Construct synthetic domains from synthpop feature vectors."""
+"""Generate domain names from synthpop feature rows."""
 
 from __future__ import annotations
 
@@ -18,17 +18,15 @@ DOMAIN_RE = re.compile(r"[^a-z0-9-]")
 NER_RESOURCES = {"PER": "names.csv", "ORG": "brands.csv", "LOC": "cities.csv"}
 FLAG_RESOURCES = {"compound": "compounds.csv", "abbr": "acronyms.csv"}
 
-# Path.glob preserved this filesystem order in the original run. X-tagged words
-# were sampled by first choosing uniformly from this exact list.
+# Resources sampled for X tags, in a fixed order so sampling is portable.
 PUBLICATION_X_RESOURCE_ORDER = [
     "ADP.csv",
-    "brands copy.csv",
+    "brands.csv",
     "NUM.csv",
     "ADJ.csv",
     "PRON.csv",
-    "DET copy.csv",
-    "NOUN.csv",
     "DET.csv",
+    "NOUN.csv",
     "CONJ.csv",
     "PRT.csv",
     "english.csv",
@@ -42,8 +40,8 @@ class WeightedSampler:
         frame = pd.read_csv(path)
         if frame.shape[1] < 2:
             raise ValueError(f"resource must have word and weight columns: {path}")
-        # fillna('nan') preserves the pandas behavior used by the publication
-        # across both pandas 2 and 3.
+        # The original run turned empty cells into the literal string "nan".
+        # Do this explicitly so pandas 2 and 3 give the same result.
         self.words = frame.iloc[:, 0].fillna("nan").astype(str).to_numpy()
         weights = pd.to_numeric(frame.iloc[:, 1], errors="raise").to_numpy(dtype=float)
         self.cdf = np.cumsum(weights) / np.sum(weights)
@@ -89,7 +87,7 @@ def _parse_tag_list(value: object) -> list[str | None]:
 
 
 def collapse_feature_columns(frame: pd.DataFrame) -> pd.DataFrame:
-    """Convert synthpop's 7 POS/NER columns to the lists used by sampling."""
+    """Pack the seven POS/NER columns back into lists for the sampler."""
     output = frame.copy()
     for prefix in ("POS_Tags", "NER_Tags"):
         columns = [f"{prefix}_{index}" for index in range(7)]
@@ -112,7 +110,7 @@ class DomainGenerator:
         if missing:
             raise FileNotFoundError(
                 "missing generator resources: " + ", ".join(missing) +
-                "; see data/resources/README.md"
+                "; see \"Generate the synthetic domains\" in README.md"
             )
 
     def sampler(self, filename: str) -> WeightedSampler:

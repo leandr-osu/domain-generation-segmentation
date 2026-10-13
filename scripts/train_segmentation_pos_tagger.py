@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train the Universal Dependencies POS checkpoint used for segmentation."""
+"""Train the segmentation POS model on Universal Dependencies data."""
 
 from __future__ import annotations
 

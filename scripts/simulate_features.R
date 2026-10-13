@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
-# Reproduce data/generation/synthetic_features.csv from the frozen, expanded
-# manual feature table. Tested with R 4.3.3 and synthpop 1.9.2.
+# Rebuild data/generation/synthetic_features.csv from the expanded manual data.
+# The saved version was made with R 4.3.3 and synthpop 1.9.2.
 
 suppressPackageStartupMessages(library(synthpop))
 

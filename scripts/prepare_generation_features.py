@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Create the expanded synthpop input from the manual annotations.
+"""Build the expanded synthpop input from the manual annotations.
 
-This is the cleaned equivalent of ``compute_features.py``,
-``named_entity_recognition.py``, and ``expand_columns.py`` from the research
-workspace. The frozen output is already included for exact reproduction.
+This combines the feature, named-entity, and column-expansion steps that were
+separate scripts during development. A copy of the resulting CSV is included.
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""Metrics used in the publication's segmentation table."""
+"""Metrics for comparing domain segmentations."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ def _is_missing(value: object) -> bool:
 
 
 def normalize_segmentation(value: object) -> str:
-    """Return the stored pipe-delimited representation without re-tokenizing it."""
+    """Clean up a stored segmentation without changing its tokens."""
     if _is_missing(value):
         return ""
     return str(value).strip()
@@ -23,10 +23,10 @@ def exact_match(reference: object, prediction: object) -> bool:
 
 
 def jaccard_similarity(reference: object, prediction: object) -> float:
-    """Jaccard similarity over the *set* of pipe-delimited segments.
+    """Compute Jaccard similarity over the unique pipe-delimited segments.
 
-    This deliberately matches the evaluator in the research repository. It is
-    not a boundary Jaccard and repeated tokens count once.
+    The original evaluator worked on token sets, not boundaries, so repeated
+    tokens only count once here as well.
     """
     left = set(normalize_segmentation(reference).split("|"))
     right = set(normalize_segmentation(prediction).split("|"))

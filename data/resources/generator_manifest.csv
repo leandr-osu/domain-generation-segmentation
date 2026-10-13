@@ -1,0 +1,18 @@
+filename,bytes,sha256,role,upstream
+ADJ.csv,264000,a267a2d6be246fa12e6f381ae891df1b2baa62181081446a6a9d6f94def8acd5,POS-weighted words,WikiText-103 tagged with Brown POS model
+ADP.csv,18646,08af6f709f71a7330a5d1dd405f71877a73d69127178fd4360a123ed46aad761,POS-weighted words,WikiText-103 tagged with Brown POS model
+ADV.csv,114805,d1a2917b0829952429260196462b91e5647789e02d7eb6a8dbb9582af73cab75,POS-weighted words,WikiText-103 tagged with Brown POS model
+CONJ.csv,1684,6be398102ddf5ca1f522251b2ca5ef7462cb026acaca79f47f3e548dc1cacd85,POS-weighted words,WikiText-103 tagged with Brown POS model
+DET.csv,6263,51992aaf6e77facae5ef55d1d1aefa7721890bea05a87d37659dd93ff36d6b5f,POS-weighted words and X fallback,WikiText-103 tagged with Brown POS model
+NOUN.csv,1901082,7f48dc0c940ccdc8e324e19b2ca119f8c7ebb0dec83c2645a3e42c5bc99d72bf,POS-weighted words,WikiText-103 tagged with Brown POS model
+NUM.csv,1081,a9b57a9a124d9f2d0c39f2fd33a15bfe5987357c18cf73429422b3a62282fd9f,POS-weighted words,derived word list
+PRON.csv,3913,ef437c8e33485b06229591af06f9da9a86e4e55bb405a268bfcb1cbb190ed45e,POS-weighted words,WikiText-103 tagged with Brown POS model
+PRT.csv,54447,291bc9af9ba9f3f5ef23897ad45d7f24eae3e0e59e2a3385bfc7f16d36aff8b5,POS-weighted words,WikiText-103 tagged with Brown POS model
+VERB.csv,341217,36bfb86c2a3a081741c2dacbe008840ba26a33e83867421bf8721af9e2285b04,POS-weighted words,WikiText-103 tagged with Brown POS model
+acronyms.csv,118892,5b25471a12dd58b7341bd270711a9e54231b99edbd2d8c0fc87bd8af0699bd2e,abbreviation flag,Wiktionary English acronym/initialism/abbreviation categories
+brands.csv,73587,a1df0f2e8e163632226babc73171e266fd1fe8d388261bb6ca5f96a61153f990,ORG named entities and X fallback,Amazon-M2 product metadata
+cities.csv,320335,b12fac04ec8730ac62a75528543ce51ed1a3adcba9331e7930389fcb1719d23b,LOC named entities,SimpleMaps US Cities database
+compounds.csv,102275,29f8058929a5521c7c412eba2a7c2913130292fe4531c157cf076efc0de3996a,compound flag,compound-word source used in research workspace
+english.csv,7851,63b367397dd8bd07fe8b31a4e6b7bd3c817fe291ec533c9bcb9f2105c27d85f3,X fallback pool,derived English word list
+names.csv,1017059,a638ad326c75a16050308451fe4c489804555e5953fc3b996bb8ae80e2396926,PER named entities,US baby names 1880-2014
+

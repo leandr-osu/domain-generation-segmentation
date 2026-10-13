@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stream WikiText-103 and build the frequency table used by generation."""
+"""Build the generator's word-frequency table from streamed WikiText-103."""
 
 from __future__ import annotations
 
