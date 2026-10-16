@@ -15,16 +15,15 @@ Code and data for synthetic domain generation and domain-name segmentation from:
 ├── configs/publication.json          # publication evaluation configuration
 ├── data/
 │   ├── generation/                   # feature table and synthpop feature vectors
+│   ├── llm/                          # stored GPT-5 mini responses for replay
 │   ├── manual/human_domains.csv      # 2,000 manually segmented domains
-│   ├── reference/                    # frozen predictions and publication metrics
 │   ├── resources/                    # Viterbi word counts and generator word lists
 │   └── synthetic/domains.csv         # 100,000 synthetic domains
 ├── scripts/                          # resource preparation and model training
-├── src/domain_generation_segmentation/
-│   ├── generation.py                 # synthetic domain sampler
-│   ├── evaluate.py                   # configuration-driven evaluation
-│   └── segmenters/                   # Viterbi, VBE, POS, GPT, and hybrid
-└── tests/
+└── src/domain_generation_segmentation/
+    ├── generation.py                 # synthetic domain sampler
+    ├── evaluate.py                   # configuration-driven evaluation
+    └── segmenters/                   # Viterbi, VBE, POS, GPT, and hybrid
 ```
 
 ## Setup
@@ -57,13 +56,14 @@ source license does not allow public redistribution. To obtain a copy, contact
 domain-evaluate configs/publication.json
 ```
 
-This runs every segmenter on the synthetic and human domains, writes the
-predictions and `outputs/metrics.csv`, and checks each score against
-`data/reference/publication_metrics.csv`. Run it from the repository root. GPT
-and the hybrid replay the frozen API responses, so the run is offline and
-deterministic. POS runs only when its checkpoint is at
-`artifacts/pos_segmentation_model/`, and is skipped otherwise. The human hybrid
-score is aggregate-only, so it is reported as `aggregate_only` and not checked.
+This runs every segmenter on the synthetic and human domains, prints the exact
+match and Jaccard scores, and writes them to `outputs/metrics.csv` alongside the
+predictions. Run it from the repository root; the full run takes about 40
+minutes. GPT and the hybrid replay the stored responses in `data/llm/`, so the
+run is offline and deterministic. POS runs only when its checkpoint is at
+`artifacts/pos_segmentation_model/`, and is skipped otherwise. The paper's
+human hybrid score came from live API responses that were not retained, so the
+replayed score differs slightly.
 
 ## Change the evaluation configuration
 
@@ -81,9 +81,7 @@ Copy `configs/publication.json`, edit the copy, and pass it to
 - `pos_model` is the POS checkpoint directory, and `output_dir` is where
   results are written.
 
-Unknown keys are rejected. Scores that differ from the publication are
-reported as `MISMATCH`; datasets without publication scores are reported as
-`no_reference`.
+Unknown keys are rejected.
 
 ## Data sources
 

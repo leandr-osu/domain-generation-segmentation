@@ -20,12 +20,12 @@
   "datasets": {
     "synthetic": {
       "input": "data/synthetic/domains.csv",
-      "llm_cache": "data/reference/synthetic_predictions.csv.gz",
+      "llm_cache": "data/llm/synthetic.csv",
       "rows": {"viterbi": 100000, "fallback": 100000, "vbe": 100000, "pos": 1000, "gpt": 10000, "hybrid": 10000}
     },
     "human": {
       "input": "data/manual/human_domains.csv",
-      "llm_cache": "data/reference/human_predictions.csv.gz",
+      "llm_cache": "data/llm/human.csv",
       "rows": {"viterbi": 2000, "fallback": 2000, "vbe": 2000, "pos": 2000, "gpt": 2000, "hybrid": 2000}
     }
   }

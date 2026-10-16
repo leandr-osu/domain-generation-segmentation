@@ -17,27 +17,26 @@ data/resources/vbe_ngrams/
 data/resources/char_counts/
 data/resources/generator/cities.csv
 
-# Only files needed to rerun the experiments and replicate their results are
-# published. Integrity manifests, per-directory READMEs, reports, records that
-# no code reads, and analyses produced outside this repository stay local.
+# Only files needed to rerun the experiments are published. Integrity
+# manifests, per-directory READMEs, records that no code reads, and analyses
+# produced outside this repository stay local.
 checksums.sha256
 CITATION.cff
 docs/
 */**/README.md
 configs/*holdout*
-tests/test_generation.py
 
-# Raw annotation sheets and agreement summaries.
+# Publication results and the internal checks against them.
+data/reference/
+tests/
+src/domain_generation_segmentation/reproduce.py
+scripts/compare_predictions.py
+
+# Raw annotation sheets.
 data/manual/annotator_*.csv
-data/reference/annotation_agreement*
 
 # Held-out fidelity analysis (external pipeline).
 data/synthetic/*holdout*
-data/reference/fidelity_*
 
-# Prose reports and unasserted records.
-data/reference/*.md
-data/reference/publication_throughput.csv
-
-# Superseded corpus and its results, kept locally only.
+# Superseded corpus and its results.
 deprecated/

@@ -2,7 +2,11 @@
 
 Relative paths in the configuration are resolved against the current working
 directory. Each method runs on the first ``rows[method]`` rows of its dataset;
-methods missing from ``rows`` are not run.
+methods missing from ``rows`` are not run, and optional methods whose model,
+package, or API key is unavailable are skipped with a printed reason.
+
+Predictions are written to ``<output_dir>/<dataset>.csv`` and the exact match
+and mean Jaccard of every method that ran to ``<output_dir>/metrics.csv``.
 """
 
 from __future__ import annotations
@@ -23,7 +27,6 @@ from .evaluation import evaluate_predictions
 from .runner import (
     METHOD_COLUMNS,
     LlmOptions,
-    _artifact_root,
     _default_vbe_state,
     _load_cached_llm,
     fallback_columns,
@@ -37,15 +40,6 @@ from .runner import (
 from .segmenters import viterbi
 
 
-# Method names used in data/reference/publication_metrics.csv.
-PUBLICATION_METHOD = {
-    "viterbi": "viterbi",
-    "fallback": "viterbi_fallback",
-    "vbe": "entropy_vbe",
-    "pos": "pos",
-    "gpt": "gpt_5_mini",
-    "hybrid": "hybrid",
-}
 CONFIG_KEYS = {"output_dir", "pos_model", "llm", "hybrid_threshold", "fallback", "datasets"}
 DATASET_KEYS = {"input", "llm_cache", "rows"}
 # Keyword arguments of the fallback segmenter that a configuration may set.
@@ -54,7 +48,7 @@ FALLBACK_KEYS = {
     for name, parameter in inspect.signature(viterbi.segment_with_metadata).parameters.items()
     if parameter.kind is inspect.Parameter.KEYWORD_ONLY and name != "compute_confidence"
 }
-TOLERANCE = 1e-12
+METRIC_COLUMNS = ["method", "dataset", "rows", "exact", "jaccard"]
 
 
 @dataclass(frozen=True)
@@ -138,31 +132,14 @@ def skip_reason(method: str, config: Config, dataset: Dataset) -> str | None:
     return None
 
 
-def _status(method: str, dataset: str, rows: int, exact: float, jaccard: float, expected: pd.DataFrame) -> dict[str, Any]:
-    match = expected[(expected.method == PUBLICATION_METHOD[method]) & (expected.dataset == dataset)]
-    if match.empty:
-        return {"expected_exact": None, "expected_jaccard": None, "status": "no_reference"}
-    record = match.iloc[0]
-    if record.verification == "aggregate_only":
-        status = "aggregate_only"
-    elif (
-        rows == int(record.evaluation_rows)
-        and abs(exact - record.artifact_exact) < TOLERANCE
-        and abs(jaccard - record.artifact_jaccard) < TOLERANCE
-    ):
-        status = "ok"
-    else:
-        status = "MISMATCH"
-    return {"expected_exact": record.artifact_exact, "expected_jaccard": record.artifact_jaccard, "status": status}
-
-
 def _assign(frame: pd.DataFrame, columns: dict[str, list[object]]) -> None:
     # Columns shorter than the frame are left blank below their last row.
     for column, values in columns.items():
         frame[column] = pd.Series(values, index=frame.index[: len(values)])
 
 
-def evaluate_dataset(config: Config, dataset: Dataset, expected: pd.DataFrame) -> list[dict[str, Any]]:
+def evaluate_dataset(config: Config, dataset: Dataset) -> list[dict[str, Any]]:
+    """Run and score the dataset's methods, returning one metrics row per method that ran."""
     full = pd.read_csv(dataset.input, low_memory=False)
     if "domain" not in full.columns or "segmented" not in full.columns:
         raise ValueError(f"{dataset.input} must contain domain and segmented columns")
@@ -256,21 +233,14 @@ def evaluate_dataset(config: Config, dataset: Dataset, expected: pd.DataFrame) -
     frame.to_csv(config.output_dir / f"{dataset.name}.csv", index=False)
 
     metrics: list[dict[str, Any]] = []
-    for method in METHOD_COLUMNS:
-        if method not in rows:
-            continue
-        if method in skipped:
-            metrics.append({
-                "method": method, "dataset": dataset.name, "rows": rows[method], "exact": None,
-                "jaccard": None, "expected_exact": None, "expected_jaccard": None, "status": "skipped",
-            })
+    for method, column in METHOD_COLUMNS.items():
+        if method not in active:
             continue
         count = active[method]
-        result = evaluate_predictions(frame["segmented"].head(count), frame[METHOD_COLUMNS[method]].head(count))
+        result = evaluate_predictions(frame["segmented"].head(count), frame[column].head(count))
         metrics.append({
             "method": method, "dataset": dataset.name, "rows": result.rows,
             "exact": result.exact_match, "jaccard": result.mean_jaccard,
-            **_status(method, dataset.name, result.rows, result.exact_match, result.mean_jaccard, expected),
         })
     return metrics
 
@@ -280,21 +250,15 @@ def main(argv: Iterable[str] | None = None) -> None:
     parser.add_argument("config", type=Path, help="JSON evaluation configuration")
     args = parser.parse_args(argv)
     config = load_config(args.config)
-    expected = pd.read_csv(_artifact_root() / "data" / "reference" / "publication_metrics.csv")
 
     rows: list[dict[str, Any]] = []
     for dataset in config.datasets:
-        rows.extend(evaluate_dataset(config, dataset, expected))
-    table = pd.DataFrame(
-        rows,
-        columns=["method", "dataset", "rows", "exact", "jaccard", "expected_exact", "expected_jaccard", "status"],
-    )
+        rows.extend(evaluate_dataset(config, dataset))
+    table = pd.DataFrame(rows, columns=METRIC_COLUMNS)
     config.output_dir.mkdir(parents=True, exist_ok=True)
     table.to_csv(config.output_dir / "metrics.csv", index=False)
     print()
     print(table.to_string(index=False))
-    if (table.status == "MISMATCH").any():
-        raise SystemExit("one or more metrics differ from data/reference/publication_metrics.csv")
 
 
 if __name__ == "__main__":
