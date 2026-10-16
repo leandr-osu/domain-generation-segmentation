@@ -45,10 +45,11 @@ GPT API calls.
 domain-generate data/generation/synthetic_features.csv data/resources/generator outputs/domains.csv --seed 42
 ```
 
-This reproduces `data/synthetic/domains.csv` byte for byte. It needs four word
-lists that cannot be redistributed (`names.csv`, `cities.csv`,
-`compounds.csv`, `acronyms.csv`); place them in `data/resources/generator/`.
-Their hashes are listed in `data/resources/generator_manifest.csv`.
+This reproduces `data/synthetic/domains.csv` byte for byte. It also needs
+`data/resources/generator/cities.csv`, which is not included because its
+source license does not allow public redistribution. To obtain a copy, contact
+<leandr@oregonstate.edu>. Its expected hash is in
+`data/resources/generator_manifest.csv`.
 
 ## Evaluate the segmenters
 
@@ -83,3 +84,26 @@ Copy `configs/publication.json`, edit the copy, and pass it to
 Unknown keys are rejected. Scores that differ from the publication are
 reported as `MISMATCH`; datasets without publication scores are reported as
 `no_reference`.
+
+## Data sources
+
+The generator word lists in `data/resources/generator/` include third-party
+data:
+
+- `cities.csv` (available on request): city names and populations from the
+  [SimpleMaps US Cities database](https://simplemaps.com/data/us-cities),
+  Basic v1.92.
+- `names.csv`: first names with their counts summed over 1880–2014, from the
+  US Social Security Administration's baby-name data, which is in the public
+  domain ([CC0](https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-data)).
+- `acronyms.csv`: alphanumeric entries from Wiktionary's English acronym,
+  initialism, and abbreviation categories, licensed under
+  [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). This file
+  is shared under the same license.
+- `compounds.csv`: the unique compound words (`stim`) from LADEC, licensed
+  under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) for
+  noncommercial use only. The first entry, `gadabout`, is omitted, as in the
+  published corpus. Gagné, C. L., Spalding, T. L., & Schmidtke, D. (2019).
+  LADEC: The Large Database of English Compounds. *Behavior Research Methods*,
+  51, 2152–2179. <https://doi.org/10.3758/s13428-019-01282-6>; data:
+  <https://doi.org/10.7939/r3-dyqx-9b36>.
