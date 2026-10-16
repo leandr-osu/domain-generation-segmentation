@@ -44,11 +44,19 @@ GPT API calls.
 domain-generate data/generation/synthetic_features.csv data/resources/generator outputs/domains.csv --seed 42
 ```
 
-This reproduces `data/synthetic/domains.csv` byte for byte. It also needs
-`data/resources/generator/cities.csv`, which is not included because its
-source license does not allow public redistribution. To obtain a copy, contact
-<leandr@oregonstate.edu>. Its expected hash is in
-`data/resources/generator_manifest.csv`.
+It needs `data/resources/generator/cities.csv`, which is not included because
+its source license does not allow public redistribution. You can build it from
+the free [SimpleMaps US Cities database](https://simplemaps.com/data/us-cities):
+save the download's `uscities.csv` as `data/resources/uscities.csv`, then run
+
+```bash
+python scripts/prepare_generator_resources.py cities data/resources/uscities.csv data/resources/generator/cities.csv
+```
+
+SimpleMaps updates this database, so a newer version gives a slightly different
+corpus. To reproduce `data/synthetic/domains.csv` exactly, contact
+<leandr@oregonstate.edu> for the `cities.csv` used in the publication; its
+expected hash is in `data/resources/generator_manifest.csv`.
 
 ## Evaluate the segmenters
 

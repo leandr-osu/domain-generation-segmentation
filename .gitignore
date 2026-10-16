@@ -15,6 +15,7 @@ artifacts/pos_generation_model/
 artifacts/pos_segmentation_model/
 data/resources/vbe_ngrams/
 data/resources/char_counts/
+data/resources/uscities.csv
 data/resources/generator/cities.csv
 
 # Only files needed to rerun the experiments are published. Integrity
