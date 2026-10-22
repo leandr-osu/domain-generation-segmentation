@@ -55,8 +55,7 @@ python scripts/prepare_generator_resources.py cities data/resources/uscities.csv
 
 SimpleMaps updates this database, so a newer version gives a slightly different
 corpus. To reproduce `data/synthetic/domains.csv` exactly, contact
-<leandr@oregonstate.edu> for the `cities.csv` used in the publication; its
-expected hash is in `data/resources/generator_manifest.csv`.
+<leandr@oregonstate.edu> for the `cities.csv` used in the publication.
 
 ## Evaluate the segmenters
 
@@ -67,16 +66,11 @@ domain-evaluate configs/publication.json
 This runs every segmenter on the synthetic and human domains, prints the exact
 match and Jaccard scores, and writes them to `outputs/metrics.csv` alongside the
 predictions. Run it from the repository root; the full run takes about 40
-minutes. GPT and the hybrid replay the stored responses in `data/llm/`, so the
-run is offline and deterministic. POS runs only when its checkpoint is at
-`artifacts/pos_segmentation_model/`, and is skipped otherwise. The paper's
-human hybrid score came from live API responses that were not retained, so the
-replayed score differs slightly.
+minutes. Note: by default, the GPT-5 Mini and Hybrid segmenters will use the stored responses in `data/llm`
 
 ## Change the evaluation configuration
 
-Copy `configs/publication.json`, edit the copy, and pass it to
-`domain-evaluate`.
+To change the config, either edit `configs/publication.json` and run the same command as above or create a new `.json` config file following the template of `configs/publication.json` and pass it to the `domain-evaluate` command (eg. `domain-evaluate <your config here>`).
 
 - `datasets.<name>.rows` sets how many leading rows each method is scored on.
   Remove a method to skip it. Add a dataset with its own `input` CSV, which
@@ -88,8 +82,6 @@ Copy `configs/publication.json`, edit the copy, and pass it to
 - `fallback` holds the Viterbi fallback's priors and penalties.
 - `pos_model` is the POS checkpoint directory, and `output_dir` is where
   results are written.
-
-Unknown keys are rejected.
 
 ## Data sources
 
